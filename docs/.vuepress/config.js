@@ -40,23 +40,5 @@ module.exports = {
   // title: 'Hello VuePress',
   // description: 'Just playing around'
   plugins: [
-    [
-      'vuepress-plugin-comment',
-      {
-        choosen: 'gitalk',
-        options: {
-          id: '<%- frontmatter.commentid || frontmatter.permalink %>',
-          title: '「Comment」<%- frontmatter.title %>',
-          body: '<%- frontmatter.title %>：<%-window.location.origin%><%- window.location.pathname %>',
-          clientID: 'bd729577007e51c7024e',
-          clientSecret: '2ffab37b6220d89b521a4c2e3d1093bf7ca86ec1',
-          repo: 'pf-table',
-          owner: 'pangao66',
-          // 这里接受一个数组，可以添加多个管理员
-          admin: ['pangao66'],
-          distractionFreeMode: false
-        }
-      }
-    ]
   ]
 }

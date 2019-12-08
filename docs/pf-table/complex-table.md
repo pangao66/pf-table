@@ -1,4 +1,4 @@
-### 多功能表格
+### 综合表格
 <ClientOnly>
 <complex-table></complex-table>
 </ClientOnly>

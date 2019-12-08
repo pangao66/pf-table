@@ -1,4 +1,4 @@
-### 查询表格
+### 搜索表格
 <ClientOnly>
 <search-table></search-table>
 </ClientOnly>

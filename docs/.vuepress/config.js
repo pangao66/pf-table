@@ -25,10 +25,9 @@ module.exports = {
           sidebarDepth: 1,
           children: [
             '',
-            '基础表格',
-            '分页表格',
-            '查询表格',
-            '多功能表格'
+            'base-table',
+            'search-table',
+            'complex-table'
           ]
         }
       ]

@@ -214,7 +214,7 @@ export default {
           case 'date':
             return formatDate(cellValue, 'yyyy-MM-dd')
           case 'time':
-            return formatDate(cellValue, 'yyyy-MM-dd hh:mm:ss')
+            return formatDate(cellValue, 'yyyy-MM-dd HH:mm:ss')
           case 'money': // 金额三位分割
             return cellValue.toLocaleString()
           case 'point2': // 保留两位小数

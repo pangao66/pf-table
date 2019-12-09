@@ -26,6 +26,7 @@
     "highlight.js": "^9.16.2",
     "mockjs": "^1.1.0",
     "number-precision": "^1.3.2",
-    "vue-highlight.js": "^3.1.0"
+    "vue-highlight.js": "^3.1.0",
+    "throttle-debounce": "latest"
   }
 }

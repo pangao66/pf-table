@@ -1,6 +1,11 @@
-<template xmlns="" xmlns="" xmlns="" xmlns="">
-  <el-form :model="form" v-bind="$attrs" v-on="$listeners" ref="form" label-width="120px" label-position="right"
-           label-suffix="：" :class="formClass">
+<template>
+  <el-form
+      :model="form"
+      v-bind="{...$attrs,...defaultFormConfig}"
+      v-on="$listeners"
+      ref="form"
+      :class="formClass"
+  >
     <template v-for="item in formItems">
       <template v-if="item.slot">
         <template v-if="!item.slot.renderFn">
@@ -67,6 +72,7 @@ import TRate from './t-form-items/t-rate'
 import TSlider from './t-form-items/t-slider'
 import TTimePicker from './t-form-items/t-time-picker'
 import { debounce } from 'throttle-debounce'
+import { paramCase } from 'param-case'
 
 export default {
   name: 't-form',
@@ -109,13 +115,21 @@ export default {
   },
   data () {
     return {
-      form: {}
+      form: {},
+      defaultFormConfig: {
+        'label-width': '120px',
+        'label-position': 'right',
+        'label-suffix': '：'
+      }
     }
   },
   created () {
     if (this.originData && Object.keys(this.originData).length) {
       this.form = { ...this.form, ...this.originData }
     }
+  },
+  mounted () {
+    this.generateTemplate()
   },
   methods: {
     search: debounce(300, function () {
@@ -163,6 +177,71 @@ export default {
         'input-number': 't-input-number'
       }
       return map[type]
+    },
+    generateTemplate () {
+      let str = ''
+      let formConfigs = { ...this.defaultFormConfig, ...this.formOptions, ...this.$attrs }
+      const formAttrsStr = this.getAttrsStr(formConfigs)
+      str += `
+      <el-form ${formAttrsStr} :model="form" >
+        ${this.generateCodeFormItem()}
+      </el-form>
+      `
+      console.log(str)
+    },
+    generateCodeFormItem () {
+      let str = ''
+      let attrsStr = ''
+      this.formItems.forEach((item) => {
+        const type = this.getType(item.type)
+        if (type) {
+          const tag = type.replace('t-', 'el-')
+          const formItemAttrsStr = this.getAttrsStr(item.attrs)
+          if (tag) {
+            str += `
+          <el-form-item>
+            <${tag} v-model="form['${item.prop}']" ${formItemAttrsStr}>
+               ${this.getChildrenCode(item)}
+            </${tag}>
+          </el-form-item>
+        `
+          }
+        }
+      })
+      return str
+    },
+    getAttrsStr (attrs) {
+      let attrsStr = ''
+      for (let i in attrs) {
+        const isStringAttr = typeof (attrs[i]) === 'string'
+        if (isStringAttr) {
+          attrsStr += ` ${i}="${attrs[i]}" `
+        } else {
+          if (typeof (attrs[i]) === 'object') {
+            attrsStr += ` :${i}= ${JSON.stringify(attrs[i])} `
+          } else {
+            attrsStr += ` :${i}="${attrs[i]}" `
+          }
+        }
+      }
+      return attrsStr
+    },
+    getChildrenCode (item) {
+      let childStr = ''
+      if (item.type === 'select') {
+        item.options.forEach((opt) => {
+          childStr += `<el-option label="${opt.label}" value="${opt.value}"></el-option>`
+        })
+      } else if (item.type === 'radio') {
+        item.options.forEach((opt) => {
+          childStr += `<el-radio label="${opt.value}">${opt.label}</el-radio>`
+        })
+      } else if (item.type === 'checkbox') {
+        item.options.forEach((opt) => {
+          childStr += `<el-checkbox label="${opt.value}">${opt.label}</el-checkbox>`
+        })
+      }
+      return childStr
     }
   },
   watch: {

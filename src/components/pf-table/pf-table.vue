@@ -141,6 +141,10 @@ export default {
     autoLoading: {
       type: Boolean,
       default: true
+    },
+    tabs: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
@@ -259,7 +263,6 @@ export default {
   },
   components: {
     TForm,
-    // eslint-disable-next-line vue/no-unused-components
     VNodes: {
       functional: true,
       render: (h, ctx) => {

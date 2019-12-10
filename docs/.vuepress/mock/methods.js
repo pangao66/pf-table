@@ -1,6 +1,6 @@
-import {pagination} from './util'
+import { pagination } from './util'
 import Mock from 'mockjs'
-import {Random} from 'mockjs'
+import { Random } from 'mockjs'
 
 let List = []
 const count = 60
@@ -9,26 +9,26 @@ for (let i = 0; i < count; i++) {
     id: Mock.Random.guid(),
     name: Mock.Random.cname(),
     address: Mock.mock('@county(true)'),
-    'age|18-60': 1,
-    birth: Mock.Random.date(),
-    sex: Mock.Random.integer(0, 1)
+    'birth|315504000000-946656000000': 1,
+    sex: Mock.Random.integer(0, 1),
+    'job|1': ['designer', 'programmer', 'testers', 'product'] // 从字符串数组中随机选择一个数
   }))
 }
 export const getPageList = (option) => {
-  let {body} = option
+  let { body } = option
   body = JSON.parse(body)
   console.log(body)
-  const {currentPage, pageSize} = body
+  const { currentPage, pageSize } = body
   return {
     list: pagination(currentPage, pageSize, List),
     total: List.length
   }
 }
 export const getSearchList = (option) => {
-  let {body} = option
+  let { body } = option
   body = JSON.parse(body)
   console.log(body)
-  const {currentPage, pageSize, ...query} = body
+  const { currentPage, pageSize, ...query } = body
   let list = [...List]
   for (let i in query) {
     if (query[i]) {
@@ -43,10 +43,10 @@ export const getSearchList = (option) => {
   }
 }
 export const deleteUser = (option) => {
-  let {body} = option
+  let { body } = option
   body = JSON.parse(body)
   console.log(body)
-  const {id} = body
+  const { id } = body
   const index = List.findIndex((item) => {
     return item.id === id
   })
@@ -61,10 +61,10 @@ export const deleteUser = (option) => {
 }
 
 export const updateUser = (option) => {
-  let {body} = option
+  let { body } = option
   body = JSON.parse(body)
   console.log(body)
-  const {id} = body
+  const { id } = body
   const index = List.findIndex((item) => {
     return item.id === id
   })
@@ -78,11 +78,11 @@ export const updateUser = (option) => {
   }
 }
 export const addUser = (option) => {
-  let {body} = option
+  let { body } = option
   body = JSON.parse(body)
   console.log(body)
   const id = Mock.Random.guid()
-  List.unshift({...body, id})
+  List.unshift({ ...body, id })
   return {
     data: {
       id

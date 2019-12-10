@@ -37,7 +37,7 @@ import editUser from './edit-user'
 
 export default {
   name: 'complex-table',
-  data() {
+  data () {
     return {
       tableData: [],
       total: 10,
@@ -46,8 +46,8 @@ export default {
     }
   },
   methods: {
-    async getTableData({...query}, done) {
-      let res = await axios.post('/search-table', {...query})
+    async getTableData ({ ...query }, done) {
+      let res = await axios.post('/search-table', { ...query })
       if (res.status === 200) {
         res = res.data
         this.tableData = res.list
@@ -56,16 +56,16 @@ export default {
       }
       done()
     },
-    addUser() {
+    addUser () {
       this.currentInfo = {}
       this.editDialogShow = true
     },
-    editUser(row) {
+    editUser (row) {
       this.currentInfo = row
       this.editDialogShow = true
     },
-    async deleteUser(row) {
-      let res = await axios.post('/delete-user', {id: row.id})
+    async deleteUser (row) {
+      let res = await axios.post('/delete-user', { id: row.id })
       if (res.status === 200) {
         res = res.data
         if (res.code === 1) {
@@ -74,10 +74,10 @@ export default {
         }
       }
     },
-    refreshTable() {
+    refreshTable () {
       this.$refs.pfTable.search()
     },
-    getSex({cellValue}) {
+    getSex ({ cellValue }) {
       const map = {
         1: '男',
         0: '女'
@@ -86,24 +86,25 @@ export default {
     }
   },
   computed: {
-    columns() {
+    columns () {
       return [
-        {prop: 'id', label: 'id'},
-        {prop: 'name', label: '姓名', attrs: {width: 60}},
-        {prop: 'address', label: '地址', attrs: {minWidth: 140}},
-        {prop: 'age', label: '年龄', attrs: {width: 60}},
-        {prop: 'birth', label: '生日'},
-        {prop: 'sex', label: '性别', formatter: this.getSex},
-        {slot: 'handle', label: "操作", attrs: {width: 170}}
+        { prop: 'id', label: 'id' },
+        { prop: 'name', label: '姓名', attrs: { width: 60 } },
+        { prop: 'address', label: '地址', attrs: { minWidth: 140 } },
+        { prop: 'age', label: '年龄', attrs: { width: 60 } },
+        { prop: 'birth', label: '生日', formatter: 'date' },
+        { prop: 'job', label: '职位' },
+        { prop: 'sex', label: '性别', formatter: this.getSex },
+        { slot: 'handle', label: '操作', attrs: { width: 170 } }
       ]
     },
-    formItems() {
+    formItems () {
       return [
-        {type: 'input', prop: 'name', label: '姓名'},
+        { type: 'input', prop: 'name', label: '姓名' },
         {
           type: 'select', prop: 'sex', label: '性别', options: [
-            {label: '男', value: 1},
-            {label: '女', value: 0}
+            { label: '男', value: 1 },
+            { label: '女', value: 0 }
           ]
         }
       ]

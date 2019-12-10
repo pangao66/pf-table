@@ -66,7 +66,7 @@ import TRadioGroup from './t-form-items/t-radio-group'
 import TRate from './t-form-items/t-rate'
 import TSlider from './t-form-items/t-slider'
 import TTimePicker from './t-form-items/t-time-picker'
-import { debounce } from 'throttle-debounce'
+// import { debounce } from 'throttle-debounce'
 
 export default {
   name: 't-form',
@@ -118,9 +118,12 @@ export default {
     }
   },
   methods: {
-    search: debounce(300, function () {
+    // search: debounce(300, function () {
+    //   this.$emit('search', this.form)
+    // }),
+    search(){
       this.$emit('search', this.form)
-    }),
+    },
     reset () {
       this.$refs.form.resetFields()
       this.$nextTick(() => {

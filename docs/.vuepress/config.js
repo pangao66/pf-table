@@ -27,7 +27,8 @@ module.exports = {
             '',
             'base-table',
             'search-table',
-            'complex-table'
+            'complex-table',
+            'tab-table'
           ]
         }
       ]

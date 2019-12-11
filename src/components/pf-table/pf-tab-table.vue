@@ -7,13 +7,16 @@
         :is-search-form="true"
         v-on="$listeners"
         inline
+        @form-change="formChange"
+        @search="search"
+        @reset="reset"
     >
-      <template v-for="item in formSlots" v-slot:[item]="scope">
-        <slot :name="item" v-bind="scope"></slot>
+      <template v-for="item in formSlots" v-slot:[item]="{form,item}">
+        <slot :name="item" v-bind="{form,item}"></slot>
       </template>
     </t-form>
     <slot name="form-after"></slot>
-    <el-tabs v-model="activeName" type="border-card" @tab-click="changeTab">
+    <el-tabs v-model="activeName" v-bind="tabConfig" type="border-card" @tab-click="changeTab">
       <el-tab-pane
           v-for="item in tabs"
           :label="item.label"
@@ -29,12 +32,14 @@
               v-if="activeName===item.name"
               :activeName="activeName"
               :info="item"
-              :columns="columns"
+              :columns="item.columns||columns"
               :data="dataObject[item.name]?dataObject[item.name].data:[]"
               :total="dataObject[item.name]?dataObject[item.name].total:10"
               v-on="$listeners"
+              v-bind="$attrs"
               ref="tab-table-item"
               :searched-tabs="searchedTabs"
+              :form-query="formQuery"
               @hook:activated="tabTableItemActivated(item)"
           >
             <template v-for="item in columnSlots" v-slot:[item]="scope">
@@ -58,7 +63,7 @@ export default {
   name: 'pf-tab-table',
   props: {
     columns: {
-      required: true,
+      type: Array,
       default: () => []
     },
     tableClass: {
@@ -102,6 +107,10 @@ export default {
     tabs: {
       type: Array,
       default: () => []
+    },
+    tabConfig: {
+      type: Object,
+      default: () => {}
     }
   },
   data () {
@@ -128,12 +137,25 @@ export default {
     },
     search () {
       this.$refs['tab-table-item'][0].search()
+      if (this.tabChangeGetData) {
+        return
+      }
       this.searchedTabs.push(this.activeName)
     },
     tabTableItemActivated (item) {
-
+      if (this.tabChangeGetData) {
+        return
+      }
+      if (this.searchedTabs.length && !(this.searchedTabs).indexOf(item.name) > -1) {
+        this.searchedTabs.push(item.name)
+        if (this.searchedTabs.length === this.tabs.length) {
+          this.searchedTabs = []
+        }
+      }
     },
     reset () {
+      this.formData = {}
+      this.search()
     },
     formChange (val) {
       this.formData = { ...val }
@@ -147,6 +169,11 @@ export default {
       return this.formItems.filter((list) => list.slot).map((v) => v.slot)
     },
     columnSlots () {
+      if (!this.columns.length) {
+        return this.tabs.forEach((item) => {
+          return item.columns.filter((c) => c.slot).map((c) => c.slot)
+        })
+      }
       return this.columns.filter((c) => c.slot).map((c) => c.slot)
     }
   },

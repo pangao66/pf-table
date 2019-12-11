@@ -10,71 +10,24 @@
         @form-change="formChange"
         inline
     >
-      <template v-for="slot in formSlots" :slot="slot" slot-scope="{ item ,form}">
-        <slot :name="item.slot" :form="form" :item="item"></slot>
+      <template v-for="item in formSlots" v-slot:[item]="{form,item}">
+        <slot :name="item" v-bind="{form,item}"></slot>
       </template>
     </t-form>
     <slot name="form-after"></slot>
-    <el-table v-loading="loading" :data="data" v-on="$listeners" v-bind="$attrs" :class="tableClass"
-              :style="tableStyle">
-      <template v-for="(col,index) in tableColumns">
-        <!-- 无列slot情况-->
-        <el-table-column
-            v-if="!col.slot"
-            :key="index"
-            :prop="col.prop"
-            :label="col.label"
-            v-bind="col.attrs||{}"
-            show-overflow-tooltip
-            :formatter="(row,column,cellValue,index)=>formatCell(row,column,cellValue,index,col.formatter)"
-        >
-
-          <template slot="header" slot-scope="scope">
-            {{col.label}}
-            <template v-if="col.headerSlot || col.tip">
-              <template v-if="col.tip">
-                <el-tooltip class="item" effect="dark" :content="col.tip" placement="top">
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-              </template>
-              <slot :name="col.headerSlot" :scope="scope" v-if="col.headerSlot"></slot>
-            </template>
-          </template>
-        </el-table-column>
-        <!--有列slot情况-->
-        <el-table-column
-            v-else
-            :key="index"
-            :label="col.label"
-            v-bind="col.attrs||{}"
-            :formatter="(row,column,cellValue,index)=>formatCell(row,column,cellValue,index,col.formatter)"
-        >
-          <template slot-scope="scope">
-            <!--自定义列 模板写法-->
-            <template v-if="!col.slot.renderFn">
-              <slot :name="col.slot" :scope="scope"></slot>
-            </template>
-            <!--自定义列 render写法-->
-            <template v-else>
-              {{col.slot.renderFn(scope)}}
-              <!--            <VNodes :vnodes="col.slot.renderFn(scope)"></VNodes>-->
-            </template>
-          </template>
-          <!-- 列头部slot-->
-          <template slot="header" slot-scope="scope">
-            {{col.label}}
-            <template v-if="col.headerSlot || col.tip">
-              <template v-if="col.tip">
-                <el-tooltip class="item" effect="dark" :content="col.tip" placement="top">
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-              </template>
-              <slot :name="col.headerSlot" :scope="scope" v-if="col.headerSlot"></slot>
-            </template>
-          </template>
-        </el-table-column>
+    <t-table
+        v-loading="loading"
+        :data="data"
+        :columns="columns"
+        v-on="$listeners"
+        v-bind="$attrs"
+        :class="tableClass"
+        :style="tableStyle"
+    >
+      <template v-for="item in columnSlots" v-slot:[item]="scope">
+        <slot :name="item" v-bind="{...scope}"></slot>
       </template>
-    </el-table>
+    </t-table>
     <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -89,9 +42,8 @@
 </template>
 
 <script>
-import { formatDate } from 'element-ui/lib/utils/date-util'
-import NP from 'number-precision'
 import TForm from './t-form'
+import TTable from './t-table'
 
 export default {
   name: 'pf-table',
@@ -142,10 +94,6 @@ export default {
       type: Boolean,
       default: true
     },
-    tabs: {
-      type: Array,
-      default: () => []
-    }
   },
   data () {
     return {
@@ -201,40 +149,6 @@ export default {
     },
     formChange (val) {
       this.formData = { ...val }
-    },
-    formatCell (row, column, cellValue, index, formatter) {
-      if (cellValue === null || cellValue === '' || typeof cellValue === 'undefined') {
-        return '-'
-      }
-      if (!formatter) {
-        return cellValue
-      }
-      const type = typeof formatter
-      if (type === 'function') {
-        return formatter({ row, column, cellValue, index })
-      }
-      if (type === 'string') {
-        switch (formatter) {
-          case 'date':
-            return formatDate(cellValue, 'yyyy-MM-dd')
-          case 'time':
-            return formatDate(cellValue, 'yyyy-MM-dd HH:mm:ss')
-          case 'money': // 金额三位分割
-            return cellValue.toLocaleString()
-          case 'point2': // 保留两位小数
-            return NP.round(cellValue, 2)
-          case 'rmb': // 人民币分变成元
-            return NP.round(NP.divide(cellValue, 100), 2)
-          default :
-            return cellValue
-        }
-      }
-      if (type === 'object') {
-        if (formatter.type && formatter.type === 'date') {
-          return formatDate(cellValue, formatter.content)
-        }
-      }
-      return cellValue
     }
   },
   computed: {
@@ -244,24 +158,18 @@ export default {
         pageSize, currentPage
       }
     },
-    tableColumns () {
-      return this.columns.filter((item) => !item.hidden)
-    },
     formQuery () {
       return this.syncFormQuery ? this.formData : this.searchQuery
     },
     formSlots () {
-      const formItems = this.formItems
-      let list = []
-      formItems.forEach((item) => {
-        if (item.slot) {
-          list.push(item.slot)
-        }
-      })
-      return list
+      return this.formItems.filter((list) => list.slot).map((v) => v.slot)
+    },
+    columnSlots () {
+      return this.columns.filter((c) => c.slot).map((c) => c.slot)
     }
   },
   components: {
+    TTable,
     TForm,
     VNodes: {
       functional: true,

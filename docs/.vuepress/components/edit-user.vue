@@ -9,7 +9,7 @@
       @confirm="confirm"
       v-on="$listeners"
   >
-    <template slot="describe" slot-scope="{form,item}">
+    <template v-slot:describe="{form,item}">
       <el-form-item :label="item.label" :prop="item.prop">
         <el-input type="textarea" v-model="form[item.prop]"/>
       </el-form-item>
@@ -29,29 +29,24 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       formData: {}
     }
   },
-  created() {
+  created () {
     if (this.isEdit) {
-      this.formData = {...this.info}
+      this.formData = { ...this.info }
     }
   },
   methods: {
-    async confirm(result, done) {
+    async confirm (result, done) {
       let res = {}
       if (this.isEdit) {
-        res = await axios.post('/update-user', {...result})
+        res = await axios.post('/update-user', { ...result })
       } else {
         // 通过出生年月计算年龄
-        const {birth} = result
-        const birthDate = new Date(birth);
-        const newDate = new Date();
-        const year = newDate.getFullYear();
-        let age = year - birthDate.getFullYear();
-        res = await axios.post('/add-user', {...result, age})
+        res = await axios.post('/add-user', { ...result })
       }
       if (res.status === 200) {
         res = res.data
@@ -65,29 +60,35 @@ export default {
     }
   },
   computed: {
-    formItems() {
+    formItems () {
       return [
-        {type: 'input', label: '姓名', prop: 'name'},
+        { type: 'input', label: '姓名', prop: 'name', trim: true },
         {
           type: 'radio', label: '性别', prop: 'sex',
           options: [
-            {label: '男', value: 1},
-            {label: '女', value: 0}
-          ]
+            { label: '男', value: 1 },
+            { label: '女', value: 0 }
+          ],
+          formItemAttrs: { required: true }
         },
-        {type: 'input', label: '地址', prop: 'address'},
-        {type: 'date', label: '出生日期', prop: 'birth', attrs: {'value-format': 'yyyy-MM-dd'}},
-        {slot: 'describe', label: '描述', prop: 'describe'}
+        { type: 'input', label: '地址', prop: 'address' },
+        {
+          type: 'date',
+          label: '出生日期',
+          prop: 'birth',
+          attrs: { 'value-format': 'timestamp' }
+        },
+        { slot: 'describe', label: '描述', prop: 'describe' }
       ]
     },
-    rules() {
+    rules () {
       return {
-        name: {required: true, message: '请输入姓名', trigger: 'blur'},
-        address: {required: true, message: '请输入地址', trigger: 'change'},
-        birth: {required: true, message: '请输入出生日期', trigger: 'change'}
+        name: { required: true, message: '请输入姓名', trigger: 'blur' },
+        address: { required: true, message: '请输入地址', trigger: 'change' },
+        birth: { required: true, message: '请输入出生日期', trigger: 'change' }
       }
     },
-    isEdit() {
+    isEdit () {
       return Object.keys(this.info).length
     }
   }

@@ -1,14 +1,7 @@
 import Mock from 'mockjs'
-import {addUser, deleteUser, getPageList, getSearchList, updateUser} from './methods'
+import { addUser, deleteUser, getBaseTable, getPageList, getSearchList, updateUser } from './methods'
 
-Mock.mock('/base-table', {
-  'list|3': [{
-    'id|+1': 1,
-    'email': '@email',
-    'name': '@cname',
-    'address': '@county(true)'
-  }]
-})
+Mock.mock('/base-table', 'post', getBaseTable)
 Mock.mock('/page-table', 'post', getPageList)
 Mock.mock('/search-table', 'post', getSearchList)
 Mock.mock('/delete-user', 'post', deleteUser)

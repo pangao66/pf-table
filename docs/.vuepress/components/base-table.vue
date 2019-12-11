@@ -1,11 +1,14 @@
 <template>
-  <pf-table
+  <t-table
       :data="tableData"
       :columns="columns"
-      :pagination="false"
-      @get-table-data="getTableData"
+      :stripe="true"
+      @row-dblclick="rowDblClick"
   >
-  </pf-table>
+    <template v-slot:sex="{row}">
+      <el-tag :type="row.sex?'success':'danger'">{{getSex(row.sex)}}</el-tag>
+    </template>
+  </t-table>
 </template>
 <script>
 import axios from 'axios'
@@ -17,24 +20,47 @@ export default {
       tableData: [{ id: 11, email: 'p.ldx@ljrprqgz.cn', name: '段军', address: '湖北省 襄阳市 南漳县' }]
     }
   },
+  created () {
+    this.getTableData()
+  },
   methods: {
-    async getTableData ({}, done) {
-      let res = await axios.get('/base-table')
+    async getTableData () {
+      let res = await axios.post('/base-table')
       if (res.status === 200) {
         res = res.data
-        this.tableData = res.list
-        console.log(res.list)
+        this.tableData = res
+        console.log(res)
       }
-      done()
+    },
+    rowDblClick (row) {
+      this.$message.success(`您双击了姓名为${row.name}这一行`)
+    },
+    getSex (sex) {
+      const map = {
+        1: '男',
+        0: '女'
+      }
+      return map[sex] || '-'
+    },
+    getJob ({ cellValue }) {
+      const map = {
+        designer: '设计',
+        programmer: '程序员',
+        testers: '测试',
+        product: '产品'
+      }
+      return map[cellValue]
     }
   },
   computed: {
     columns () {
       return [
-        { prop: 'id', label: 'id' },
-        { prop: 'name', label: '姓名' },
-        { prop: 'email', label: '邮箱' },
-        { prop: 'address', label: '地址' }
+        { prop: 'id', label: 'id', attrs: { width: 260 } },
+        { prop: 'name', label: '姓名', attrs: { width: 60 } },
+        { prop: 'address', label: '地址', attrs: { minWidth: 160 } },
+        { prop: 'birth', label: '生日', formatter: 'date' },
+        { prop: 'job', label: '职位', formatter: this.getJob },
+        { slot: 'sex', label: '性别' }
       ]
     }
   }

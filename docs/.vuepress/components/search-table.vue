@@ -6,6 +6,9 @@
       :form-items="formItems"
       @get-table-data="getTableData"
   >
+    <template v-slot:sex="{row}">
+      <el-tag :type="row.sex?'success':'danger'">{{getSex(row.sex)}}</el-tag>
+    </template>
   </pf-table>
 </template>
 
@@ -31,12 +34,21 @@ export default {
       }
       done()
     },
-    getSex ({ cellValue }) {
+    getSex (sex) {
       const map = {
         1: '男',
         0: '女'
       }
-      return map[cellValue] || '-'
+      return map[sex] || '-'
+    },
+    getJob ({ cellValue }) {
+      const map = {
+        designer: '设计',
+        programmer: '程序员',
+        testers: '测试',
+        product: '产品'
+      }
+      return map[cellValue]
     }
   },
   computed: {
@@ -45,9 +57,9 @@ export default {
         { prop: 'id', label: 'id', attrs: { width: 260 } },
         { prop: 'name', label: '姓名', attrs: { width: 60 } },
         { prop: 'address', label: '地址', attrs: { minWidth: 160 } },
-        { prop: 'age', label: '年龄', attrs: { width: 60 } },
-        { prop: 'birth', label: '生日' },
-        { prop: 'sex', label: '性别', formatter: this.getSex }
+        { prop: 'birth', label: '生日', formatter: 'date' },
+        { prop: 'job', label: '职位', formatter: this.getJob },
+        { slot: 'sex', label: '性别' }
       ]
     },
     formItems () {

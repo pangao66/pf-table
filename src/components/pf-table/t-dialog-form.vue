@@ -10,9 +10,9 @@
       :close-on-press-escape="false"
       :custom-class="customClass"
   >
-    <t-form v-bind="$attrs" :form-items="formItems" ref="form">
-      <template v-for="slot in formSlots" :slot="slot" slot-scope="{ item ,form}">
-        <slot :name="item.slot" :form="form" :item="item"></slot>
+    <t-form v-bind="$attrs" v-on="$listeners" :form-items="formItems" ref="form">
+      <template v-for="item in formSlots" v-slot:[item]="{form,item}">
+        <slot :name="item" v-bind="{form,item}"></slot>
       </template>
     </t-form>
     <slot name="footer" slot="footer">
@@ -26,7 +26,7 @@
 
 <script>
 import TForm from './t-form'
-import {Loading} from 'element-ui'
+import { Loading } from 'element-ui'
 
 export default {
   name: 't-dialog-form',
@@ -51,13 +51,13 @@ export default {
       default: true
     }
   },
-  data() {
+  data () {
     return {
       loading: false
     }
   },
   methods: {
-    async confirm() {
+    async confirm () {
       let res = await this.$refs.form.validate()
       if (res) {
         let loadingInstance = Loading.service({
@@ -71,18 +71,11 @@ export default {
     }
   },
   computed: {
-    formSlots() {
-      const formItems = this.formItems
-      let list = []
-      formItems.forEach((item) => {
-        if (item.slot) {
-          list.push(item.slot)
-        }
-      })
-      return list
-    }
+    formSlots () {
+      return this.formItems.filter((list) => list.slot).map((v) => v.slot)
+    },
   },
-  components: {TForm}
+  components: { TForm }
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <t-table :data="tableData" :columns="columns" v-loading="loading">
+    <t-table :data="tableData" :columns="columns" v-bind="$attrs" v-on="$listeners" v-loading="loading">
       <template v-for="item in columnSlots" v-slot:[item]="scope">
         <slot :name="item" v-bind="{...scope}"></slot>
       </template>
@@ -35,7 +35,11 @@ export default {
       type: Object,
       default: () => {}
     },
-    tabChangeGetDta: {
+    formQuery: {
+      type: Object,
+      default: () => {}
+    },
+    tabChangeGetData: {
       type: Boolean,
       default: false
     },
@@ -67,17 +71,16 @@ export default {
     }
   },
   created () {
-    if (!this.tabChangeGetDta) {
+    if (!this.tabChangeGetData) {
       this.getTableData()
     }
   },
   activated () {
-    if (this.tabChangeGetDta) {
-      if (this.searchedTabs.length && !(this.searchedTabs.indexOf(this.name) > -1)) {
-        this.search()
-      } else {
-        this.getTableData()
-      }
+    if (this.tabChangeGetData) {
+      this.getTableData()
+    }
+    if (this.searchedTabs.length && !(this.searchedTabs.indexOf(this.name) > -1)) {
+      this.search()
     }
   },
   methods: {
@@ -101,7 +104,8 @@ export default {
       this.$emit('get-table-data',
         {
           ...this.currentPageInfo,
-          name: this.name
+          tabName: this.name,
+          ...this.formQuery
         },
         ({ tableData, total }) => {
           if (tableData) {
@@ -125,18 +129,6 @@ export default {
     columnSlots () {
       return this.columns.filter((c) => c.slot).map((c) => c.slot)
     }
-    // columns () {
-    //   return [
-    //     { prop: 'id', label: 'id' },
-    //     { prop: 'name', label: '姓名', attrs: { width: 60 } },
-    //     { prop: 'address', label: '地址', attrs: { minWidth: 140 } },
-    //     { prop: 'age', label: '年龄', attrs: { width: 60 } },
-    //     { prop: 'birth', label: '生日', formatter: 'date' },
-    //     { prop: 'job', label: '职位' },
-    //     { prop: 'sex', label: '性别', formatter: this.getSex },
-    //     { slot: 'handle', label: '操作', attrs: { width: 170 } }
-    //   ]
-    // }
   },
   components: { TTable },
   watch: {}

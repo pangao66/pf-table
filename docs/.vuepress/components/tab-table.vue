@@ -4,11 +4,22 @@
       :columns="columns"
       :form-items="formItems"
       @get-table-data="getTableData"
-      @search="searchForm"
-      ref="pf-table-data"
+      ref="pf-tab-table"
   >
+    <template v-slot:sex="{row}">
+      <el-tag :type="row.sex?'success':'danger'">{{getSex(row.sex)}}</el-tag>
+    </template>
     <template v-slot:handle="{row}">
-      <el-button @click="deleteRow(row)">删除</el-button>
+      <el-popconfirm
+          title="请确认是否删除"
+          width="200"
+          placement="top-end"
+          @onConfirm="deleteUser(row)"
+      >
+        <template v-slot:reference>
+          <el-button size="mini" type="danger">删除</el-button>
+        </template>
+      </el-popconfirm>
     </template>
   </pf-tab-table>
 </template>
@@ -28,8 +39,8 @@ export default {
   },
   methods: {
     async getTableData (query, done) {
-      const { name, ...other } = query
-      let res = await axios.post('/search-table', { job: name, ...other })
+      const { tabName, ...other } = query
+      let res = await axios.post('/search-table', { job: tabName, ...other })
       if (res.status === 200) {
         res = res.data
         this.tableData = res.list
@@ -42,18 +53,34 @@ export default {
         done()
       }
     },
-    searchForm () {
-      this.$refs['pf-table-data'].search()
+    async deleteUser (row) {
+      let res = await axios.post('/delete-user', { id: row.id })
+      if (res.status === 200) {
+        res = res.data
+        if (res.code === 1) {
+          this.$message.success('删除用户成功')
+          this.refreshTable()
+        }
+      }
     },
-    getSex ({ cellValue }) {
+    refreshTable () {
+      this.$refs['pf-tab-table'].search()
+    },
+    getSex (value) {
       const map = {
         1: '男',
         0: '女'
       }
-      return map[cellValue] || '-'
+      return map[value]
     },
-    deleteRow (row) {
-      console.log(row)
+    getJob ({ cellValue }) {
+      const map = {
+        designer: '设计',
+        programmer: '程序员',
+        testers: '测试',
+        product: '产品'
+      }
+      return map[cellValue]
     }
   },
   computed: {
@@ -70,10 +97,9 @@ export default {
         { prop: 'id', label: 'id' },
         { prop: 'name', label: '姓名', attrs: { width: 60 } },
         { prop: 'address', label: '地址', attrs: { minWidth: 140 } },
-        { prop: 'age', label: '年龄', attrs: { width: 60 } },
         { prop: 'birth', label: '生日', formatter: 'date' },
-        { prop: 'job', label: '职位' },
-        { prop: 'sex', label: '性别', formatter: this.getSex },
+        { prop: 'job', label: '职位', formatter: this.getJob },
+        { slot: 'sex', label: '性别' },
         { slot: 'handle', label: '操作', attrs: { width: 170 } }
       ]
     },

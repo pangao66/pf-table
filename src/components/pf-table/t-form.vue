@@ -1,4 +1,4 @@
-<template xmlns="" xmlns="" xmlns="" xmlns="">
+<template>
   <el-form :model="form" v-bind="$attrs" v-on="$listeners" ref="form" label-width="120px" label-position="right"
            label-suffix="：" :class="formClass">
     <template v-for="item in formItems">
@@ -6,9 +6,7 @@
         <template v-if="!item.slot.renderFn">
           <slot
               :name="item.slot"
-              :item="item"
-              :form="form"
-              :scope="{form,item}"
+              v-bind="{form,item}"
           />
         </template>
         <template v-else>
@@ -21,12 +19,22 @@
           <el-form-item
               :label="item.label"
               :prop="item.prop"
+              v-bind="{...item.formItemAttrs}"
           >
             <component
                 :is="getType(item.type)"
+                v-model.trim="form[item.prop]"
+                :item="item"
+                v-if="item.type==='input'&&item.trim"
+            >
+            </component>
+            <component
+                v-else
+                :is="getType(item.type)"
                 v-model="form[item.prop]"
                 :item="item"
-            ></component>
+            >
+            </component>
           </el-form-item>
         </template>
         <el-row v-else>
@@ -34,12 +42,22 @@
             <el-form-item
                 :label="col.label"
                 :prop="col.prop"
+                v-bind="{...col.formItemAttrs}"
             >
               <component
                   :is="getType(col.type)"
-                  v-model="form[col.prop]"
+                  v-model.trim="form[col.prop]"
                   :item="col"
-              ></component>
+                  v-if="item.type==='input'&&item.trim"
+              >
+              </component>
+              <component
+                  v-else
+                  :is="getType(item.type)"
+                  v-model="form[item.prop]"
+                  :item="item"
+              >
+              </component>
             </el-form-item>
           </el-col>
         </el-row>
@@ -121,7 +139,7 @@ export default {
     // search: debounce(300, function () {
     //   this.$emit('search', this.form)
     // }),
-    search(){
+    search () {
       this.$emit('search', this.form)
     },
     reset () {

@@ -8,15 +8,20 @@
         @get-table-data="getTableData"
         ref="pfTable"
     >
-      <el-button icon="el-icon-plus" type="primary" slot="form-after" @click="addUser" style="margin-bottom: 20px;">添加
-      </el-button>
-      <template slot="handle" slot-scope="{scope}">
-        <el-button size="mini" type="primary" @click="editUser(scope.row)">编辑</el-button>
+      <template v-slot:form-after>
+        <el-button icon="el-icon-plus" type="primary" @click="addUser" style="margin-bottom: 20px;">添加
+        </el-button>
+      </template>
+      <template v-slot:sex="{row}">
+        <el-tag :type="row.sex?'success':'danger'">{{getSex(row.sex)}}</el-tag>
+      </template>
+      <template v-slot:handle="{row}">
+        <el-button size="mini" type="primary" @click="editUser(row)">编辑</el-button>
         <el-popconfirm
             title="请确认是否删除"
             width="200"
             placement="top-end"
-            @onConfirm="deleteUser(scope.row)"
+            @onConfirm="deleteUser(row)"
         >
           <el-button size="mini" type="danger" slot="reference">删除</el-button>
         </el-popconfirm>
@@ -77,12 +82,21 @@ export default {
     refreshTable () {
       this.$refs.pfTable.search()
     },
-    getSex ({ cellValue }) {
+    getSex (cellValue) {
       const map = {
         1: '男',
         0: '女'
       }
       return map[cellValue] || '-'
+    },
+    getJob ({ cellValue }) {
+      const map = {
+        designer: '设计',
+        programmer: '程序员',
+        testers: '测试',
+        product: '产品'
+      }
+      return map[cellValue]
     }
   },
   computed: {
@@ -91,10 +105,9 @@ export default {
         { prop: 'id', label: 'id' },
         { prop: 'name', label: '姓名', attrs: { width: 60 } },
         { prop: 'address', label: '地址', attrs: { minWidth: 140 } },
-        { prop: 'age', label: '年龄', attrs: { width: 60 } },
         { prop: 'birth', label: '生日', formatter: 'date' },
-        { prop: 'job', label: '职位' },
-        { prop: 'sex', label: '性别', formatter: this.getSex },
+        { prop: 'job', label: '职位', formatter: this.getJob },
+        { slot: 'sex', label: '性别' },
         { slot: 'handle', label: '操作', attrs: { width: 170 } }
       ]
     },

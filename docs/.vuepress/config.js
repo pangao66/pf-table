@@ -39,6 +39,16 @@ module.exports = {
   },
   // title: 'Hello VuePress',
   // description: 'Just playing around'
-  plugins: [
-  ]
+  plugins: [],
+  chainWebpack: (config, isServer) => {
+    config.module
+      .rule('js') // Find the rule.
+      .use('babel-loader') // Find the loader
+      .tap(options => Object.assign(options, { // Modifying options
+        plugins: [
+          '@babel/plugin-proposal-nullish-coalescing-operator',
+          '@babel/plugin-proposal-optional-chaining'
+        ]
+      }))
+  }
 }

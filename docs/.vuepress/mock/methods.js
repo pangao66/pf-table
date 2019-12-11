@@ -3,7 +3,7 @@ import Mock from 'mockjs'
 import { Random } from 'mockjs'
 
 let List = []
-const count = 60
+const count = 2000
 for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
     id: Mock.Random.guid(),
@@ -24,6 +24,9 @@ export const getPageList = (option) => {
     total: List.length
   }
 }
+export const getBaseTable = () => {
+  return pagination(1, 10, List)
+}
 export const getSearchList = (option) => {
   let { body } = option
   body = JSON.parse(body)
@@ -31,7 +34,7 @@ export const getSearchList = (option) => {
   const { currentPage, pageSize, ...query } = body
   let list = [...List]
   for (let i in query) {
-    if (query[i]) {
+    if (query ?? [i]) {
       list = list.filter((item) => {
         return item[i] === query[i]
       })

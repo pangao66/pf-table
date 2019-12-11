@@ -1,6 +1,11 @@
 <template>
-  <el-table :data="data" v-on="$listeners" v-bind="$attrs" :class="tableClass"
-            :style="tableStyle">
+  <el-table
+      :data="data"
+      v-on="$listeners"
+      v-bind="$attrs"
+      :class="tableClass"
+      :style="tableStyle"
+  >
     <template v-for="(col,index) in tableColumns">
       <!-- 无列slot情况-->
       <el-table-column
@@ -103,7 +108,7 @@ export default {
           case 'money': // 金额三位分割
             return cellValue.toLocaleString()
           case 'point2': // 保留两位小数
-            return NP.round(cellValue, 2)
+            return NP.round(cellValue, 2).toFixed(2)
           case 'rmb': // 人民币分变成元
             return NP.round(NP.divide(cellValue, 100), 2)
           default :

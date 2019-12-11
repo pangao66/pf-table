@@ -1,5 +1,9 @@
 <template>
-  <el-input v-bind="{...$attrs,...item.attrs}" v-on="$listeners" clearable/>
+  <el-input
+      v-bind="{...$attrs,...item.attrs}"
+      v-on="$listeners"
+      clearable
+  />
 </template>
 
 <script>

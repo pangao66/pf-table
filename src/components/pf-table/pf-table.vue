@@ -10,8 +10,8 @@
         @form-change="formChange"
         inline
     >
-      <template v-for="item in formSlots" v-slot:[item]="{form,item}">
-        <slot :name="item" v-bind="{form,item}"></slot>
+      <template v-for="item in formSlots" v-slot:[item]="scope">
+        <slot :name="item" v-bind="scope"></slot>
       </template>
     </t-form>
     <slot name="form-after"></slot>

@@ -11,8 +11,8 @@
       :custom-class="customClass"
   >
     <t-form v-bind="$attrs" v-on="$listeners" :form-items="formItems" ref="form">
-      <template v-for="item in formSlots" v-slot:[item]="{form,item}">
-        <slot :name="item" v-bind="{form,item}"></slot>
+      <template v-for="item in formSlots" v-slot:[item]="scope">
+        <slot :name="item" v-bind="scope"></slot>
       </template>
     </t-form>
     <slot name="footer" slot="footer">

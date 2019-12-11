@@ -26,7 +26,6 @@ module.exports = {
           children: [
             '',
             'base-table',
-            'search-table',
             'complex-table',
             'tab-table'
           ]

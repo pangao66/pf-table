@@ -221,7 +221,7 @@ export default {
         } : undefined,
         item.integer ? { pattern: integerNumberReg, message: '请输入正整数', trigger } : undefined,
         item.tel ? { pattern: telReg, message: '请输入正确的手机号码', trigger } : undefined,
-        item.priceReg ? { pattern: priceReg, message: '请输入正确的金额', trigger } : undefined,
+        item.price ? { pattern: priceReg, message: '请输入正确的金额', trigger } : undefined,
         item.towPoint ? { pattern: towPointReg, message: '请输入正确的两位小数', trigger } : undefined
       ]
       if (item.rules && item.rules instanceof Array) {

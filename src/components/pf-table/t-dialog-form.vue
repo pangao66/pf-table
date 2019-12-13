@@ -10,7 +10,7 @@
       :close-on-press-escape="false"
       :custom-class="customClass"
   >
-    <t-form v-bind="formOptions" v-on="$listeners" :form-items="formItems" :rules="rules" ref="form">
+    <t-form :form-options="formOptions" v-on="$listeners" :form-items="formItems" :rules="rules" ref="form">
       <template v-for="item in formSlots" v-slot:[item]="scope">
         <slot :name="item" v-bind="scope"></slot>
       </template>

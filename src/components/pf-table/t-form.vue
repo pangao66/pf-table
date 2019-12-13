@@ -1,6 +1,12 @@
 <template>
-  <el-form :model="form" v-bind="{...formOptions,...defaultFormOptions,...$attrs}" v-on="$listeners" ref="form"
-           :class="formClass">
+  <el-form
+      :model="form"
+      v-bind="{...formOptions,...defaultFormOptions}"
+      :rules="rules"
+      v-on="$listeners"
+      ref="form"
+      :class="formClass"
+  >
     <template v-for="item in formItems">
       <template v-if="item.slot">
         <template v-if="!item.slot.renderFn">
@@ -126,6 +132,10 @@ export default {
     },
     formClass: {
       type: String
+    },
+    rules: {
+      type: [Object, Array],
+      default: () => {}
     }
   },
   data () {

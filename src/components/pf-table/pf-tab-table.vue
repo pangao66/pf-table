@@ -9,7 +9,8 @@
         @form-change="formChange"
         @search="search"
         @reset="reset"
-        inline
+        :rules="rules"
+        :form-options="{inline:true}"
     >
       <template v-for="item in formSlots" v-slot:[item]="{form,item}">
         <slot :name="item" v-bind="{form,item}"></slot>
@@ -78,6 +79,10 @@ export default {
     },
     formOptions: {
       type: Object,
+      default: () => {}
+    },
+    rules: {
+      type: [Object, Array],
       default: () => {}
     },
     pagination: {

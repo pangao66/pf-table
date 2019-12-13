@@ -8,7 +8,8 @@
         @search="search"
         @reset="reset"
         @form-change="formChange"
-        inline
+        :form-options="{inline:true}"
+        :rules="rules"
     >
       <template v-for="item in formSlots" v-slot:[item]="scope">
         <slot :name="item" v-bind="scope"></slot>
@@ -70,6 +71,10 @@ export default {
       type: Object,
       default: () => {}
     },
+    rules: {
+      type: [Object, Array],
+      default: () => {}
+    },
     pagination: {
       type: Boolean,
       default: true
@@ -93,7 +98,7 @@ export default {
     autoLoading: {
       type: Boolean,
       default: true
-    },
+    }
   },
   data () {
     return {

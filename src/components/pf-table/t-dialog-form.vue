@@ -10,7 +10,7 @@
       :close-on-press-escape="false"
       :custom-class="customClass"
   >
-    <t-form v-bind="$attrs" v-on="$listeners" :form-items="formItems" ref="form">
+    <t-form v-bind="formOptions" v-on="$listeners" :form-items="formItems" :rules="rules" ref="form">
       <template v-for="item in formSlots" v-slot:[item]="scope">
         <slot :name="item" v-bind="scope"></slot>
       </template>
@@ -49,6 +49,14 @@ export default {
     autoLoading: {
       type: Boolean,
       default: true
+    },
+    formOptions: {
+      type: Object,
+      default: () => {}
+    },
+    rules: {
+      type: [Object, Array],
+      default: () => {}
     }
   },
   data () {
@@ -73,7 +81,7 @@ export default {
   computed: {
     formSlots () {
       return this.formItems.filter((list) => list.slot).map((v) => v.slot)
-    },
+    }
   },
   components: { TForm }
 }

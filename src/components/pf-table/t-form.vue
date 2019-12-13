@@ -205,7 +205,7 @@ export default {
     },
     getRules (item) {
       if (!item.type) {
-        return {}
+        return undefined
       }
       const triggerMessage = item.type === 'input' ? '请输入' : '请选择'
       const trigger = item.type === 'input' ? 'blur' : 'change'
@@ -230,7 +230,7 @@ export default {
         rules = [item.rules, ...rules]
       }
       rules = rules.filter(v => v)
-      return rules
+      return rules.length ? rules : undefined
     }
   },
   watch: {

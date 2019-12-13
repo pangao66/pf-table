@@ -73,14 +73,12 @@ export default {
         },
         {
           type: 'input', label: '地址', prop: 'address',
-          required: true
         },
         {
           type: 'date',
           label: '出生日期',
           prop: 'birth',
           attrs: { 'value-format': 'timestamp' },
-          required: true
         },
         { slot: 'describe', label: '描述', prop: 'describe' }
       ]
@@ -88,8 +86,8 @@ export default {
     rules () {
       return {
         // name: { required: true, message: '请输入姓名', trigger: 'blur' },
-        // address: { required: true, message: '请输入地址', trigger: 'change' },
-        // birth: { required: true, message: '请输入出生日期', trigger: 'change' }
+        address: { required: true, message: '请输入地址', trigger: 'change' },
+        birth: { required: true, message: '请输入出生日期', trigger: 'change' }
       }
     },
     isEdit () {

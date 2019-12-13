@@ -6,10 +6,10 @@
         :form-items="formItems"
         :is-search-form="true"
         v-on="$listeners"
-        inline
         @form-change="formChange"
         @search="search"
         @reset="reset"
+        inline
     >
       <template v-for="item in formSlots" v-slot:[item]="{form,item}">
         <slot :name="item" v-bind="{form,item}"></slot>

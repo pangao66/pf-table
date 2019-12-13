@@ -2,7 +2,7 @@
   <el-table
       :data="data"
       v-on="$listeners"
-      v-bind="$attrs"
+      v-bind="{border:true,...$attrs}"
       :class="tableClass"
       :style="tableStyle"
   >

@@ -1,6 +1,6 @@
 <template>
-  <el-form :model="form" v-bind="$attrs" v-on="$listeners" ref="form" label-width="120px" label-position="right"
-           label-suffix="：" :class="formClass">
+  <el-form :model="form" v-bind="{...formOptions,...defaultFormOptions,...$attrs}" v-on="$listeners" ref="form"
+           :class="formClass">
     <template v-for="item in formItems">
       <template v-if="item.slot">
         <template v-if="!item.slot.renderFn">
@@ -20,6 +20,7 @@
               :label="item.label"
               :prop="item.prop"
               v-bind="{...item.formItemAttrs}"
+              :rules="getRules(item)"
           >
             <component
                 :is="getType(item.type)"
@@ -43,6 +44,7 @@
                 :label="col.label"
                 :prop="col.prop"
                 v-bind="{...col.formItemAttrs}"
+                :rules="getRules(col)"
             >
               <component
                   :is="getType(col.type)"
@@ -84,6 +86,7 @@ import TRadioGroup from './t-form-items/t-radio-group'
 import TRate from './t-form-items/t-rate'
 import TSlider from './t-form-items/t-slider'
 import TTimePicker from './t-form-items/t-time-picker'
+import { carNumReg, idCardReg, integerNumberReg, priceReg, telReg, towPointReg } from '../../utils/regs'
 // import { debounce } from 'throttle-debounce'
 
 export default {
@@ -127,7 +130,12 @@ export default {
   },
   data () {
     return {
-      form: {}
+      form: {},
+      defaultFormOptions: {
+        labelWidth: '120px',
+        labelPosition: 'right',
+        labelSuffix: '：'
+      }
     }
   },
   created () {
@@ -184,6 +192,35 @@ export default {
         'input-number': 't-input-number'
       }
       return map[type]
+    },
+    getRules (item) {
+      if (!item.type) {
+        return {}
+      }
+      const triggerMessage = item.type === 'input' ? '请输入' : '请选择'
+      const trigger = item.type === 'input' ? 'blur' : 'change'
+      let rules = [
+        item.required ?
+          { required: true, message: `${triggerMessage}${item.label}`, trigger }
+          : undefined,
+        item.idCard ? {
+          pattern: idCardReg, message: '请输入正确的身份证号', trigger
+        } : undefined,
+        item.carNumber ? {
+          pattern: carNumReg, message: '请输入正确的车牌号', trigger
+        } : undefined,
+        item.integer ? { pattern: integerNumberReg, message: '请输入正整数', trigger } : undefined,
+        item.tel ? { pattern: telReg, message: '请输入正确的手机号码', trigger } : undefined,
+        item.priceReg ? { pattern: priceReg, message: '请输入正确的金额', trigger } : undefined,
+        item.towPoint ? { pattern: towPointReg, message: '请输入正确的两位小数', trigger } : undefined
+      ]
+      if (item.rules && item.rules instanceof Array) {
+        rules = [...item.rules, ...rules]
+      } else {
+        rules = [item.rules, ...rules]
+      }
+      rules = rules.filter(v => v)
+      return rules
     }
   },
   watch: {

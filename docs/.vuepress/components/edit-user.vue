@@ -62,30 +62,34 @@ export default {
   computed: {
     formItems () {
       return [
-        { type: 'input', label: '姓名', prop: 'name', trim: true },
+        { type: 'input', label: '姓名', prop: 'name', trim: true, required: true },
         {
           type: 'radio', label: '性别', prop: 'sex',
           options: [
             { label: '男', value: 1 },
             { label: '女', value: 0 }
           ],
-          formItemAttrs: { required: true }
+          required: true
         },
-        { type: 'input', label: '地址', prop: 'address' },
+        {
+          type: 'input', label: '地址', prop: 'address',
+          required: true
+        },
         {
           type: 'date',
           label: '出生日期',
           prop: 'birth',
-          attrs: { 'value-format': 'timestamp' }
+          attrs: { 'value-format': 'timestamp' },
+          required: true
         },
         { slot: 'describe', label: '描述', prop: 'describe' }
       ]
     },
     rules () {
       return {
-        name: { required: true, message: '请输入姓名', trigger: 'blur' },
-        address: { required: true, message: '请输入地址', trigger: 'change' },
-        birth: { required: true, message: '请输入出生日期', trigger: 'change' }
+        // name: { required: true, message: '请输入姓名', trigger: 'blur' },
+        // address: { required: true, message: '请输入地址', trigger: 'change' },
+        // birth: { required: true, message: '请输入出生日期', trigger: 'change' }
       }
     },
     isEdit () {

@@ -25,8 +25,8 @@ module.exports = {
           sidebarDepth: 1,
           children: [
             '',
-            'base-table',
-            'complex-table',
+            'p-table',
+            'pf-table',
             'tab-table'
           ]
         }

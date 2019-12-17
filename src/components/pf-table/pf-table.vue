@@ -1,6 +1,6 @@
 <template>
   <div>
-    <t-form
+    <p-form
         v-if="formItems.length"
         v-bind="formOptions"
         :form-items="formItems"
@@ -10,13 +10,14 @@
         @form-change="formChange"
         :form-options="{inline:true}"
         :rules="rules"
+        v-on="$listeners"
     >
       <template v-for="item in formSlots" v-slot:[item]="scope">
         <slot :name="item" v-bind="scope"></slot>
       </template>
-    </t-form>
+    </p-form>
     <slot name="form-after"></slot>
-    <t-table
+    <p-table
         v-loading="loading"
         :data="data"
         :columns="columns"
@@ -28,7 +29,7 @@
       <template v-for="item in columnSlots" v-slot:[item]="scope">
         <slot :name="item" v-bind="{...scope}"></slot>
       </template>
-    </t-table>
+    </p-table>
     <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -43,8 +44,8 @@
 </template>
 
 <script>
-import TForm from './t-form'
-import TTable from './t-table'
+import PForm from '../pf-table/p-form'
+import PTable from '../pf-table/p-table'
 
 export default {
   name: 'pf-table',
@@ -149,6 +150,7 @@ export default {
     },
     reset () {
       this.searchQuery = {}
+      this.formData = {}
       this.pageInfo.currentPage = 1
       this.getTableData()
     },
@@ -167,15 +169,28 @@ export default {
       return this.syncFormQuery ? this.formData : this.searchQuery
     },
     formSlots () {
-      return this.formItems.filter((list) => list.slot).map((v) => v.slot)
+      let list = []
+      this.formItems.forEach((item) => {
+        if (item.slot) {
+          list.push(item.slot)
+        }
+        if (item.type === 'grid') {
+          item.columns.forEach((col) => {
+            if (col.slot) {
+              list.push(col.slot)
+            }
+          })
+        }
+      })
+      return list
     },
     columnSlots () {
       return this.columns.filter((c) => c.slot).map((c) => c.slot)
     }
   },
   components: {
-    TTable,
-    TForm,
+    PTable,
+    PForm,
     VNodes: {
       functional: true,
       render: (h, ctx) => {

@@ -1,5 +1,5 @@
 <template>
-  <t-table
+  <p-table
       :data="tableData"
       :columns="columns"
       :stripe="true"
@@ -8,7 +8,7 @@
     <template v-slot:sex="{row}">
       <el-tag :type="row.sex?'success':'danger'">{{getSex(row.sex)}}</el-tag>
     </template>
-  </t-table>
+  </p-table>
 </template>
 <script>
 import axios from 'axios'

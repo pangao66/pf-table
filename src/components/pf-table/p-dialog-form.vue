@@ -9,27 +9,30 @@
       :append-to-body="$attrs['append-to-body']"
       :close-on-press-escape="false"
       :custom-class="customClass"
+      :width="width"
   >
-    <t-form :form-options="formOptions" v-on="$listeners" :form-items="formItems" :rules="rules" ref="form">
+    <p-form v-bind="$attrs" v-on="$listeners" :form-items="formItems" :rules="rules" ref="form"
+            :origin-data="originData">
       <template v-for="item in formSlots" v-slot:[item]="scope">
         <slot :name="item" v-bind="scope"></slot>
       </template>
-    </t-form>
+    </p-form>
     <slot name="footer" slot="footer">
       <div class="dialog-footer">
         <el-button @click="$emit('close')">取 消</el-button>
         <el-button type="primary" @click="confirm">确 定</el-button>
       </div>
     </slot>
+    <slot></slot>
   </el-dialog>
 </template>
 
 <script>
-import TForm from './t-form'
+import PForm from './p-form'
 import { Loading } from 'element-ui'
 
 export default {
-  name: 't-dialog-form',
+  name: 'p-dialog-form',
   props: {
     title: {
       type: String
@@ -57,6 +60,13 @@ export default {
     rules: {
       type: [Object, Array],
       default: () => {}
+    },
+    originData: {
+      type: Object,
+      default: () => {}
+    },
+    width: {
+      type: String
     }
   },
   data () {
@@ -80,10 +90,23 @@ export default {
   },
   computed: {
     formSlots () {
-      return this.formItems.filter((list) => list.slot).map((v) => v.slot)
+      let list = []
+      this.formItems.forEach((item) => {
+        if (item.slot) {
+          list.push(item.slot)
+        }
+        if (item.type === 'grid') {
+          item.columns.forEach((col) => {
+            if (col.slot) {
+              list.push(col.slot)
+            }
+          })
+        }
+      })
+      return list
     }
   },
-  components: { TForm }
+  components: { PForm }
 }
 </script>
 

@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import tFormItemMixin from './t-form-item-mixin'
+import pFormItemMixin from './p-form-item-mixin'
 
 export default {
-  name: 't-checkbox-group',
-  mixins: [tFormItemMixin]
+  name: 'p-checkbox-group',
+  mixins: [pFormItemMixin]
 }
 </script>
 

@@ -15,11 +15,11 @@
 </template>
 
 <script>
-import tFormItemMixin from './t-form-item-mixin'
+import pFormItemMixin from './p-form-item-mixin'
 
 export default {
-  name: 't-radio-group',
-  mixins: [tFormItemMixin]
+  name: 'p-radio-group',
+  mixins: [pFormItemMixin],
 }
 </script>
 

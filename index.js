@@ -1,16 +1,16 @@
 import pfTable from './src/components/pf-table/pf-table'
-import tFrom from './src/components/pf-table/t-form'
-import tDialogForm from './src/components/pf-table/t-dialog-form'
+import pFrom from './src/components/pf-table/p-form'
+import pDialogForm from './src/components/pf-table/p-dialog-form'
 import pfTabTable from './src/components/pf-table/pf-tab-table'
-import tTable from './src/components/pf-table/t-table'
+import pTable from './src/components/pf-table/p-table'
 
 const elFromTable = {
   install: function (Vue) {
     Vue.component('pf-table', pfTable)
-    Vue.component('p-form', tFrom)
-    Vue.component('t-dialog-form', tDialogForm)
+    Vue.component('p-form', pFrom)
+    Vue.component('p-dialog-form', pDialogForm)
     Vue.component('pf-tab-table', pfTabTable)
-    Vue.component('t-table', tTable)
+    Vue.component('p-table', pTable)
   }
 }
 export default elFromTable

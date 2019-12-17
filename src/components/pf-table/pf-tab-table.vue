@@ -1,6 +1,6 @@
 <template>
   <div>
-    <t-form
+    <p-form
         v-if="formItems.length"
         v-bind="formOptions"
         :form-items="formItems"
@@ -15,7 +15,7 @@
       <template v-for="item in formSlots" v-slot:[item]="{form,item}">
         <slot :name="item" v-bind="{form,item}"></slot>
       </template>
-    </t-form>
+    </p-form>
     <slot name="form-after"></slot>
     <el-tabs v-model="activeName" v-bind="tabConfig" type="border-card" @tab-click="changeTab">
       <el-tab-pane
@@ -41,7 +41,8 @@
               ref="tab-table-item"
               :searched-tabs="searchedTabs"
               :form-query="formQuery"
-              @hook:activated="tabTableItemActivated(item)"
+              :key="item.name"
+              @tab-activated="tabTableItemActivated"
           >
             <template v-for="item in columnSlots" v-slot:[item]="scope">
               <slot :name="item" v-bind="{...scope}"></slot>
@@ -57,7 +58,7 @@
 </template>
 
 <script>
-import TForm from './t-form'
+import PForm from './p-form'
 import TabTableItem from './tab-table-item'
 
 export default {
@@ -147,12 +148,14 @@ export default {
       }
       this.searchedTabs.push(this.activeName)
     },
-    tabTableItemActivated (item) {
+    tabTableItemActivated (name,done) {
       if (this.tabChangeGetData) {
         return
       }
-      if (this.searchedTabs.length && !(this.searchedTabs).indexOf(item.name) > -1) {
-        this.searchedTabs.push(item.name)
+      console.log()
+      if (this.searchedTabs.length && !(this.searchedTabs).indexOf(name) > -1) {
+        done()
+        this.searchedTabs.push(name)
         if (this.searchedTabs.length === this.tabs.length) {
           this.searchedTabs = []
         }
@@ -171,7 +174,20 @@ export default {
       return this.syncFormQuery ? this.formData : this.searchQuery
     },
     formSlots () {
-      return this.formItems.filter((list) => list.slot).map((v) => v.slot)
+      let list = []
+      this.formItems.forEach((item) => {
+        if (item.slot) {
+          list.push(item.slot)
+        }
+        if (item.type === 'grid') {
+          item.columns.forEach((col) => {
+            if (col.slot) {
+              list.push(col.slot)
+            }
+          })
+        }
+      })
+      return list
     },
     columnSlots () {
       if (!this.columns.length) {
@@ -185,7 +201,7 @@ export default {
   watch: {},
   components: {
     TabTableItem,
-    TForm,
+    PForm,
     VNodes: {
       functional: true,
       render: (h, ctx) => {

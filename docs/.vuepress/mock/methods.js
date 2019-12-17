@@ -34,7 +34,7 @@ export const getSearchList = (option) => {
   const { currentPage, pageSize, ...query } = body
   let list = [...List]
   for (let i in query) {
-    if (query ?? [i]) {
+    if (!(query[i] === '' || query[i] === 'undefined' || query[i] == null)) {
       list = list.filter((item) => {
         return item[i] === query[i]
       })

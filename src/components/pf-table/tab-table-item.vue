@@ -1,10 +1,10 @@
 <template>
   <div>
-    <t-table :data="tableData" :columns="columns" v-bind="$attrs" v-on="$listeners" v-loading="loading">
+    <p-table :data="tableData" :columns="columns" v-bind="$attrs" v-on="$listeners" v-loading="loading">
       <template v-for="item in columnSlots" v-slot:[item]="scope">
         <slot :name="item" v-bind="{...scope}"></slot>
       </template>
-    </t-table>
+    </p-table>
     <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-import TTable from './t-table'
+import PTable from './p-table'
 
 export default {
   name: 'tab-table-item',
@@ -79,9 +79,9 @@ export default {
     if (this.tabChangeGetData) {
       this.getTableData()
     }
-    if (this.searchedTabs.length && !(this.searchedTabs.indexOf(this.name) > -1)) {
+    this.$emit('tab-activated', this.name, () => {
       this.search()
-    }
+    })
   },
   methods: {
     search () {
@@ -130,8 +130,7 @@ export default {
       return this.columns.filter((c) => c.slot).map((c) => c.slot)
     }
   },
-  components: { TTable },
-  watch: {}
+  components: { PTable }
 }
 </script>
 <style>

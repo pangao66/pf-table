@@ -1,7 +1,7 @@
 <template>
   <el-form
       :model="form"
-      v-bind="{...formOptions,...defaultFormOptions}"
+      v-bind="{...defaultFormOptions,...formOptions}"
       :rules="rules"
       v-on="$listeners"
       ref="form"
@@ -9,15 +9,11 @@
   >
     <template v-for="item in formItems">
       <template v-if="item.slot">
-        <template v-if="!item.slot.renderFn">
+        <template>
           <slot
               :name="item.slot"
               v-bind="{form,item}"
           />
-        </template>
-        <template v-else>
-          {{item.slot.renderFn(scope)}}
-          <!--            <VNodes :vnodes="col.slot.renderFn(scope)"></VNodes>-->
         </template>
       </template>
       <template v-else>
@@ -47,6 +43,7 @@
         <el-row v-else>
           <el-col v-for="(col,index) in item.columns" :key="index" :span="col.span">
             <el-form-item
+                v-if="!col.slot"
                 :label="col.label"
                 :prop="col.prop"
                 v-bind="{...col.formItemAttrs}"
@@ -61,12 +58,20 @@
               </component>
               <component
                   v-else
-                  :is="getType(item.type)"
-                  v-model="form[item.prop]"
-                  :item="item"
+                  :is="getType(col.type)"
+                  v-model="form[col.prop]"
+                  :item="col"
               >
               </component>
             </el-form-item>
+            <template v-else>
+              <template>
+                <slot
+                    :name="col.slot"
+                    v-bind="{form,col}"
+                />
+              </template>
+            </template>
           </el-col>
         </el-row>
       </template>
@@ -82,32 +87,33 @@
 
 <script>
 
-import TFormItem from './t-form-items/t-form-item'
-import TInput from './t-form-items/t-input'
-import TSelect from './t-form-items/t-select'
-import TCheckboxGroup from './t-form-items/t-checkbox-group'
-import TDatePicker from './t-form-items/t-date-picker'
-import TInputNumber from './t-form-items/t-input-number'
-import TRadioGroup from './t-form-items/t-radio-group'
-import TRate from './t-form-items/t-rate'
-import TSlider from './t-form-items/t-slider'
-import TTimePicker from './t-form-items/t-time-picker'
-import { carNumReg, idCardReg, integerNumberReg, priceReg, telReg, towPointReg } from '../../utils/regs'
+import PFormItem from './p-form-items/p-form-item'
+import PInput from './p-form-items/p-input'
+import PSelect from './p-form-items/p-select'
+import PCheckboxGroup from './p-form-items/p-checkbox-group'
+import PDatePicker from './p-form-items/p-date-picker'
+import PInputNumber from './p-form-items/p-input-number'
+import PRadioGroup from './p-form-items/p-radio-group'
+import PRate from './p-form-items/p-rate'
+import PSlider from './p-form-items/p-slider'
+import PTimePicker from './p-form-items/p-time-picker'
+import { carNumReg, idCardReg, integerNumberReg, priceReg, telReg, towPointReg, percentReg } from '../../utils/regs'
 // import { debounce } from 'throttle-debounce'
+import NP from 'number-precision'
 
 export default {
-  name: 't-form',
+  name: 'p-form',
   components: {
-    TTimePicker,
-    TSlider,
-    TRate,
-    TRadioGroup,
-    TInputNumber,
-    TDatePicker,
-    TCheckboxGroup,
-    TSelect,
-    TInput,
-    TFormItem
+    PTimePicker,
+    PSlider,
+    PRate,
+    PRadioGroup,
+    PInputNumber,
+    PDatePicker,
+    PCheckboxGroup,
+    PSelect,
+    PInput,
+    PFormItem
   },
   props: {
     formOptions: {
@@ -136,6 +142,14 @@ export default {
     rules: {
       type: [Object, Array],
       default: () => {}
+    },
+    autoFormatPrice: {
+      type: Boolean,
+      default: true
+    },
+    autoFormatPercent: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -150,18 +164,52 @@ export default {
   },
   created () {
     if (this.originData && Object.keys(this.originData).length) {
-      this.form = { ...this.form, ...this.originData }
+      const form = { ...this.originData }
+      if (this.autoFormatPrice || this.autoFormatPercent) {
+        this.formItems.forEach((item) => {
+          if (item.price) {
+            form[item.prop] = this.transformPrice(form[item.prop])
+          }
+          if (item.percent) {
+            form[item.prop] = this.transformPercent(form[item.prop])
+          }
+        })
+      }
+      this.form = { ...this.form, ...form }
     }
   },
   methods: {
-    // search: debounce(300, function () {
-    //   this.$emit('search', this.form)
-    // }),
+    transformPrice (price) {
+      if (price !== undefined && price != null) {
+        return NP.divide(price, 100)
+      }
+      return ''
+    },
+    transformPercent (percent) {
+      if (percent !== undefined && percent != null) {
+        return NP.times(percent, 100)
+      }
+      return ''
+    },
+    recoverPrice (price) {
+      if (price !== undefined && price != null) {
+        return NP.times(price, 100)
+      }
+      return ''
+    },
+    revocerPercent (percent) {
+      if (percent !== undefined && percent != null) {
+        return NP.divide(percent, 100)
+      }
+      return ''
+    },
     search () {
+      console.log(this.form)
       this.$emit('search', this.form)
     },
     reset () {
       this.$refs.form.resetFields()
+      console.log(this.form)
       this.$nextTick(() => {
         this.$emit('reset', this.form)
       })
@@ -170,7 +218,8 @@ export default {
       try {
         await this.$refs.form.validate()
         return new Promise((resolve) => {
-          resolve({ ...this.form })
+          const result = this.getResult()
+          resolve({ ...result })
         })
       } catch (e) {
         return new Promise((resolve) => {
@@ -182,7 +231,8 @@ export default {
       let valid = await this.validate()
       return new Promise((resolve, reject) => {
         if (valid) {
-          resolve({ ...this.form })
+          const result = this.getResult()
+          resolve({ ...result })
         } else {
           reject('表单校验不通过')
         }
@@ -190,16 +240,16 @@ export default {
     },
     getType (type) {
       const map = {
-        'input': 't-input',
-        'select': 't-select',
-        'checkbox': 't-checkbox-group',
-        'date': 't-date-picker',
-        'radio': 't-radio-group',
-        'rate': 't-rate',
-        'slider': 't-slider',
-        'switch': 't-switch',
-        'time': 't-time-picker',
-        'input-number': 't-input-number'
+        'input': 'p-input',
+        'select': 'p-select',
+        'checkbox': 'p-checkbox-group',
+        'date': 'p-date-picker',
+        'radio': 'p-radio-group',
+        'rate': 'p-rate',
+        'slider': 'p-slider',
+        'switch': 'p-switch',
+        'time': 'p-time-picker',
+        'input-number': 'p-input-number'
       }
       return map[type]
     },
@@ -222,23 +272,40 @@ export default {
         item.integer ? { pattern: integerNumberReg, message: '请输入正整数', trigger } : undefined,
         item.tel ? { pattern: telReg, message: '请输入正确的手机号码', trigger } : undefined,
         item.price ? { pattern: priceReg, message: '请输入正确的金额', trigger } : undefined,
-        item.towPoint ? { pattern: towPointReg, message: '请输入正确的两位小数', trigger } : undefined
+        item.towPoint ? { pattern: towPointReg, message: '请输入正确的两位小数', trigger } : undefined,
+        item.precent ? { pattern: percentReg, message: '请输入正确的百分比', trigger } : undefined
       ]
       if (item.rules && item.rules instanceof Array) {
-        rules = [...item.rules, ...rules]
+        rules = [...rules, ...item.rules]
       } else {
-        rules = [item.rules, ...rules]
+        rules = [...rules, item.rules]
       }
       rules = rules.filter(v => v)
       return rules.length ? rules : undefined
+    },
+    getResult () {
+      const result = { ...this.form }
+      if (this.autoFormatPrice || this.autoFormatPercent) {
+        this.formItems.forEach((item) => {
+          if (item.price) {
+            result[item.prop] = this.recoverPrice(result[item.prop])
+          }
+          if (item.percent) {
+            result[item.prop] = this.revocerPercent(result[item.prop])
+          }
+        })
+      }
+      return result
     }
   },
   watch: {
     form: {
       deep: true,
       handler (val) {
-        this.$emit('form-change', val)
-        this.$emit('input', val)
+        this.$nextTick(() => {
+          this.$emit('form-change', val)
+          // this.$emit('input', val)
+        })
       }
     }
   }

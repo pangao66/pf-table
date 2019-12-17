@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: 't-form-item',
+  name: 'p-form-item',
   props: {
     item: {
       type: Object,

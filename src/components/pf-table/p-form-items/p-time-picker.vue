@@ -6,10 +6,10 @@
 </template>
 
 <script>
-import tFormItemMixin from './t-form-item-mixin'
+import pFormItemMixin from './p-form-item-mixin'
 export default {
-  name: 't-time-picker',
-  mixins: [tFormItemMixin]
+  name: 'p-time-picker',
+  mixins: [pFormItemMixin],
 }
 </script>
 

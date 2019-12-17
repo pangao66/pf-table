@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import tFormItemMixin from './t-form-item-mixin'
+import pFormItemMixin from './p-form-item-mixin'
 export default {
-  name: 't-switch',
-  mixins: [tFormItemMixin]
+  name: 'p-switch',
+  mixins: [pFormItemMixin],
 }
 </script>
 

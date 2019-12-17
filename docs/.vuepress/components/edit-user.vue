@@ -1,8 +1,8 @@
 <template>
-  <t-dialog-form
+  <p-dialog-form
       :title="isEdit?'编辑用户':'添加用户'"
       :form-items="formItems"
-      :dialog-config="{width:'500px'}"
+      width="500px"
       :rules="rules"
       v-model="formData"
       :originData="formData"
@@ -14,7 +14,7 @@
         <el-input type="textarea" v-model="form[item.prop]"/>
       </el-form-item>
     </template>
-  </t-dialog-form>
+  </p-dialog-form>
 </template>
 
 <script>
@@ -79,15 +79,14 @@ export default {
           label: '出生日期',
           prop: 'birth',
           attrs: { 'value-format': 'timestamp' },
+          required: true
         },
         { slot: 'describe', label: '描述', prop: 'describe' }
       ]
     },
     rules () {
       return {
-        // name: { required: true, message: '请输入姓名', trigger: 'blur' },
         address: { required: true, message: '请输入地址', trigger: 'change' },
-        birth: { required: true, message: '请输入出生日期', trigger: 'change' }
       }
     },
     isEdit () {

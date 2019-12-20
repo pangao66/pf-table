@@ -1,5 +1,5 @@
 <template>
-  <el-input-number v-bind="{...$attrs,...item.attrs}" v-on="$listeners"></el-input-number>
+  <el-input-number v-bind="{...$attrs,...item.attrs}" v-on="$listeners" @change="handleChange"></el-input-number>
 </template>
 
 <script>

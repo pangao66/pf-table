@@ -11,7 +11,7 @@
       :custom-class="customClass"
       :width="width"
   >
-    <p-form v-bind="$attrs" v-on="$listeners" :form-items="formItems" :rules="rules" ref="form"
+    <p-form v-bind="$attrs" v-on="$listeners" :form-options="formOptions" :form-items="formItems" :rules="rules" ref="form"
             :origin-data="originData">
       <template v-for="item in formSlots" v-slot:[item]="scope">
         <slot :name="item" v-bind="scope"></slot>

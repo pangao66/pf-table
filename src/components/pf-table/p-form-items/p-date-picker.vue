@@ -1,7 +1,7 @@
 <template>
   <el-date-picker
       v-bind="{...$attrs,...item.attrs}" v-on="$listeners"
-      clearable
+      clearable @change="handleChange"
   >
   </el-date-picker>
 </template>

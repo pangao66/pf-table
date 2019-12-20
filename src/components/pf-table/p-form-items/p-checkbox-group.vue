@@ -1,5 +1,5 @@
 <template>
-  <el-checkbox-group v-bind="{...$attrs,...item.attrs}" v-on="$listeners">
+  <el-checkbox-group v-bind="{...$attrs,...item.attrs}" v-on="$listeners"  @change="handleChange">
     <template v-if="item.attrs&&item.attrs.type&&(item.attrs.type='btn')">
       <el-checkbox v-for="opt in item.options" :key="opt.value" :label="opt.value">
         {{opt.label}}

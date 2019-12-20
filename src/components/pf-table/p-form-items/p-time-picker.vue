@@ -1,6 +1,6 @@
 <template>
   <el-time-select
-      v-bind="{...$attrs,...item.attrs}" v-on="$listeners"
+      v-bind="{...$attrs,...item.attrs}" v-on="$listeners" @change="handleChange"
   >
   </el-time-select>
 </template>

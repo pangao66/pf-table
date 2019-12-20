@@ -1,7 +1,7 @@
 <template>
   <el-form
       :model="form"
-      v-bind="{...defaultFormOptions,...formOptions}"
+      v-bind="{...defaultFormOptions,...$attrs,...formOptions}"
       :rules="rules"
       v-on="$listeners"
       ref="form"
@@ -176,6 +176,7 @@ export default {
         })
       }
       this.form = { ...this.form, ...form }
+      console.log(this.form)
     }
   },
   methods: {
@@ -273,7 +274,7 @@ export default {
         item.tel ? { pattern: telReg, message: '请输入正确的手机号码', trigger } : undefined,
         item.price ? { pattern: priceReg, message: '请输入正确的金额', trigger } : undefined,
         item.towPoint ? { pattern: towPointReg, message: '请输入正确的两位小数', trigger } : undefined,
-        item.precent ? { pattern: percentReg, message: '请输入正确的百分比', trigger } : undefined
+        item.percent ? { pattern: percentReg, message: '请输入正确的百分比', trigger } : undefined
       ]
       if (item.rules && item.rules instanceof Array) {
         rules = [...rules, ...item.rules]
@@ -304,7 +305,7 @@ export default {
       handler (val) {
         this.$nextTick(() => {
           this.$emit('form-change', val)
-          // this.$emit('input', val)
+          this.$emit('input', val)
         })
       }
     }

@@ -1,5 +1,5 @@
 <template>
-  <el-slider v-bind="{...$attrs,...item.attrs}" v-on="$listeners">
+  <el-slider v-bind="{...$attrs,...item.attrs}" v-on="$listeners" @change="handleChange">
 
   </el-slider>
 </template>

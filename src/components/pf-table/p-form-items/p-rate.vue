@@ -1,5 +1,5 @@
 <template>
-  <el-rate v-bind="{...$attrs,...item.attrs}" v-on="$listeners"></el-rate>
+  <el-rate v-bind="{...$attrs,...item.attrs}" v-on="$listeners" @change="handleChange"></el-rate>
 </template>
 
 <script>

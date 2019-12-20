@@ -111,6 +111,8 @@ export default {
             return NP.round(cellValue, 2).toFixed(2)
           case 'rmb': // 人民币分变成元
             return NP.round(NP.divide(cellValue, 100), 2)
+          case 'percent': // 小数转百分比
+            return NP.round(NP.times(cellValue, 100), 2)
           default :
             return cellValue
         }

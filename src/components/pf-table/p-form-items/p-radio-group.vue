@@ -1,5 +1,5 @@
 <template>
-  <el-radio-group v-bind="{...$attrs,...item.attrs}" v-on="$listeners">
+  <el-radio-group v-bind="{...$attrs,...item.attrs}" v-on="$listeners" @change="handleChange">
     <template v-if="item.attrs&&item.attrs.type&&(item.attrs.type='btn')">
       <el-radio-button
           v-for="opt in  item.options"
